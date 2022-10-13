@@ -77,6 +77,7 @@ jobs:
       options: --user root
     needs: [Veracode-SCA-Agent-Action, Veracode-SAST-Pipeline-Scan]
     steps:
+    - shell: bash
     - uses: actions/checkout@master
     
     - name: get scan results
@@ -87,7 +88,6 @@ jobs:
     - name: scan 
       run: |
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
-    - shell: bash
         
   Veracode-SAST-Policy-Scan:
     runs-on: ubuntu-latest
@@ -96,6 +96,7 @@ jobs:
       options: --user root
     needs: [Veracode-SAST-Sandbox-Scan]
     steps:
+    - shell: bash
     - uses: actions/checkout@master
     
     - name: get scan results
@@ -107,6 +108,5 @@ jobs:
       run: | 
           ls -l
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -scantimeout 15 -scanpollinginterval 120 -deleteincompletescan 2 
-    - shell: bash
 
    
