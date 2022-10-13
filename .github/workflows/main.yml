@@ -4,8 +4,8 @@ on: [push]
 jobs:
 
   Veracode-SAST-Pipeline-Scan:
-  runs-on: ubuntu-latest
-    container: 
+    runs-on: ubuntu-latest
+    container:
       image: veracode/pipeline-scan:latest
       options: --user root
     steps:
