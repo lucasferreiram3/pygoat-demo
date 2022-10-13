@@ -18,7 +18,7 @@ jobs:
           java -jar /opt/veracode/pipeline-scan.jar \
               -vid ${{ secrets.VID }}   \
               -vkey ${{ secrets.VKEY }} \
-              --file pygoat.zip \
-              --app_id "1242124"  \
-              --project_name "PyGoat"
+              -f pygoat.zip \
+              -aid "1242124"  \
+              -p "PyGoat"
         continue-on-error: true
