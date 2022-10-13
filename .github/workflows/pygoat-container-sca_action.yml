@@ -52,7 +52,12 @@ jobs:
       - name: Run Veracode SCA
         env:
           SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
-        uses: veracode/veracode-sca@v1.09
+        run: | 
+          export SRCCLR_SCM_URI="https://github.com/lucasferreiram3/PyGoat.git"
+          export SRCCLR_SCM_REF=${{ github.workflow }}
+          export SRCCLR_SCM_REF_TYPE="branch"
+          export SRCCLR_SCM_REV=${{ github.run_id }}
+        
+          export EXTRA_ARGS='--update-advisor'
+          curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan $EXTRA_ARGS
 
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
