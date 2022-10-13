@@ -30,6 +30,13 @@ jobs:
         run: |
           zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
           java -jar /opt/veracode/pipeline-scan.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -f pygoat.zip -aid "1242124" -p "PyGoat"
+                  
+      - name: save filtered results file
+        uses: actions/upload-artifact@v2
+        with:
+          name: pygoat.zip
+          path: pygoat.zip
+        
         continue-on-error: true
         
   Veracode-SCA-Agent-Action:
@@ -60,6 +67,7 @@ jobs:
         
           export EXTRA_ARGS='--update-advisor'
           curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan $EXTRA_ARGS
+         
         continue-on-error: true
         
   Veracode-SAST-Sandbox-Scan:
@@ -70,9 +78,14 @@ jobs:
     needs: [Veracode-SCA-Agent-Action, Veracode-SAST-Pipeline-Scan]
     steps:
     - uses: actions/checkout@master
+    
+    - name: get scan results
+      uses: actions/download-artifact@v2
+      with:
+        name: pygoat.zip
+        
     - name: scan 
       run: |
-          zip -r pygoat.zip . -i '*.py' '*.js' '*.html'  
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
 
         
@@ -84,9 +97,14 @@ jobs:
     needs: [Veracode-SAST-Sandbox-Scan]
     steps:
     - uses: actions/checkout@master
+    
+    - name: get scan results
+      uses: actions/download-artifact@v2
+      with:
+        name: pygoat.zip
+        
     - name: scan 
-      run: |
-          zip -r pygoat.zip . -i '*.py' '*.js' '*.html'  
+      run: | 
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -scantimeout 15 -scanpollinginterval 120 -deleteincompletescan 2 
 
    
