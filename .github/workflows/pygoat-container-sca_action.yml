@@ -18,6 +18,7 @@ jobs:
         
   Veracode-SAST-Pipeline-Scan:
     runs-on: ubuntu-latest
+    needs: [Install-Requeriments]
     container:
       image: veracode/pipeline-scan:latest
       options: --user root
@@ -33,6 +34,7 @@ jobs:
         
   Veracode-SCA-Agent-Action:
     runs-on: ubuntu-latest
+    needs: [Install-Requeriments]
     name: Scan repository for Issues
 
     steps:
