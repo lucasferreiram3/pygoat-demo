@@ -81,7 +81,7 @@ jobs:
                
     - name: scan 
       run: |
-          zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'
+          zip -r pygoat.zip .
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
         
   Veracode-SAST-Policy-Scan:
