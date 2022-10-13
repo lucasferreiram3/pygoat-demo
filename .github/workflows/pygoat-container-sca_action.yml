@@ -3,6 +3,19 @@ on: [push]
 
 jobs:
 
+  Install-Requeriments:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11.0b1-buster
+      options: --user root
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+
+      - name: pip install
+        run: |
+          python -m pip install --no-cache-dir pip==22.0.4
+        
   Veracode-SAST-Pipeline-Scan:
     runs-on: ubuntu-latest
     container:
@@ -18,3 +31,18 @@ jobs:
           java -jar /opt/veracode/pipeline-scan.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -f pygoat.zip -aid "1242124" -p "PyGoat"
         continue-on-error: true
         
+  Veracode-SCA-Agent-Action:
+    runs-on: ubuntu-latest
+    name: Scan repository for Issues
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Veracode SCA
+        env:
+          SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
+        uses: veracode/veracode-sca@v1.0.9
+
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          create-issues: false
