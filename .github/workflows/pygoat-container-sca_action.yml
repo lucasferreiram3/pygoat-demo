@@ -77,16 +77,11 @@ jobs:
       options: --user root
     needs: [Veracode-SCA-Agent-Action, Veracode-SAST-Pipeline-Scan]
     steps:
-    - shell: bash
     - uses: actions/checkout@master
-    
-    - name: get scan results
-      uses: actions/download-artifact@v2
-      with:
-        name: pygoat.zip
                
     - name: scan 
       run: |
+          zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
         
   Veracode-SAST-Policy-Scan:
@@ -96,7 +91,6 @@ jobs:
       options: --user root
     needs: [Veracode-SAST-Sandbox-Scan]
     steps:
-    - shell: bash
     - uses: actions/checkout@master
     
     - name: get scan results
