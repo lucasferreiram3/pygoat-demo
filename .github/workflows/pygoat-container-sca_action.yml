@@ -42,12 +42,8 @@ jobs:
       - name: Run Veracode SCA
         env:
           SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
-          SRCCLR_SCM_URI: "https://github.com/lucasferreiram3/PyGoat.git"
-          SRCCLR_SCM_REF: ${{ github.workflow }}
-          SRCCLR_SCM_REF_TYPE: "branch"
-          SRCCLR_SCM_REV: ${{ github.run_id }}
         uses: veracode/veracode-sca@v1.09
 
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          create-issues: false
+          quick: true
