@@ -60,4 +60,31 @@ jobs:
         
           export EXTRA_ARGS='--update-advisor'
           curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan $EXTRA_ARGS
+        continue-on-error: true
+        
+  Veracode-SAST-Sandbox-Scan:
+    runs-on: ubuntu-latest
+    container:
+      image: veracode/api-wrapper-java:latest
+    needs: [Veracode-SCA-Agent-Action]
+    steps:
+    - uses: actions/checkout@master
+    - name: scan 
+      run: |
+          zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
+          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
 
+        
+  Veracode-SAST-Policy-Scan:
+    runs-on: ubuntu-latest
+    container:
+      image: veracode/api-wrapper-java:latest
+    needs: [Veracode-SAST-Sandbox-Scan]
+    steps:
+    - uses: actions/checkout@master
+    - name: scan 
+      run: |
+          zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
+          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -scantimeout 15 -scanpollinginterval 120 -deleteincompletescan 2 
+
+   
