@@ -15,10 +15,5 @@ jobs:
       - name: scan
         run: |
           zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
-          java -jar /opt/veracode/pipeline-scan.jar \
-              -vid ${{ secrets.VID }}   \
-              -vkey ${{ secrets.VKEY }} \
-              -f pygoat.zip \
-              -aid "1242124"  \
-              -p "PyGoat"
+          java -jar /opt/veracode/pipeline-scan.jar -vid ${{ secrets.VID }} -vkey ${{ secrets.VKEY }} -f pygoat.zip -aid "1242124" -p "PyGoat"
         continue-on-error: true
