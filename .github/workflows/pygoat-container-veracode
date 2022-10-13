@@ -18,5 +18,6 @@ jobs:
       - name: scan
         run: |
           zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
+          grep pygoat.zip
           
         continue-on-error: true
