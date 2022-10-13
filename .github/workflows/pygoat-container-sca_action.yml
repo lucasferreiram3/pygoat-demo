@@ -30,14 +30,14 @@ jobs:
         run: |
           zip -r -v pygoat.zip . -i '*.py' '*.js' '*.html'  
           java -jar /opt/veracode/pipeline-scan.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -f pygoat.zip -aid "1242124" -p "PyGoat"
-                  
+                
+        continue-on-error: true
+                
       - name: save filtered results file
         uses: actions/upload-artifact@v2
         with:
           name: pygoat.zip
           path: pygoat.zip
-        
-        continue-on-error: true
         
   Veracode-SCA-Agent-Action:
     runs-on: ubuntu-latest
