@@ -65,7 +65,7 @@ jobs:
           export SRCCLR_SCM_REF_TYPE="branch"
           export SRCCLR_SCM_REV=${{ github.run_id }}
         
-          export EXTRA_ARGS='--update-advisor'
+          export EXTRA_ARGS='--update-advisor --uri-as-name'
           curl -sSL https://download.sourceclear.com/ci.sh | bash -s scan $EXTRA_ARGS
          
         continue-on-error: true
@@ -81,8 +81,8 @@ jobs:
                
     - name: scan 
       run: |
-          zip -r pygoat.zip .
-          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_1
+          zip -r pygoat.zip . -i '*.py' '*.html' '*.js'
+          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version "${{ github.run_id }}" -filepath pygoat.zip -createsandbox false -sandboxname SANDBOX_1
         
   Veracode-SAST-Policy-Scan:
     runs-on: ubuntu-latest
