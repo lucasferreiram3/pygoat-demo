@@ -82,7 +82,7 @@ jobs:
     - name: scan 
       run: |
           zip -r pygoat.zip . -i '*.py' '*.html' '*.js'
-          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version "${{ github.run_id }}" -filepath pygoat.zip -createsandbox false -sandboxname SANDBOX_1
+          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version "${{ github.run_id }}" -filepath pygoat.zip -createsandbox true -sandboxname SANDBOX_2
         
   Veracode-SAST-Policy-Scan:
     runs-on: ubuntu-latest
@@ -101,6 +101,6 @@ jobs:
     - name: scan 
       run: | 
           ls -l
-          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version ${date +%H%M%s%d%m%y} -filepath pygoat.zip -scantimeout 15 -scanpollinginterval 120 -deleteincompletescan 2 
+          java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VID }}" -vkey "${{ secrets.VKEY }}" -action UploadAndScan -createprofile false -appname "Pygoat-Showroom" -version "${{ github.run_id }}" -filepath pygoat.zip -scantimeout 15 -scanpollinginterval 120 -deleteincompletescan 2 
 
    
