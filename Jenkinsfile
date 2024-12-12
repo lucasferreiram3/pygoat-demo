@@ -42,6 +42,24 @@ pipeline {
             }
         }
         
+        stage('Veracode SAST - Policy Scan') { 
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'veracode-credentials', passwordVariable: 'VKEY', usernameVariable: 'VID')]) {
+                    sh 'curl -o veracode-wrapper.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${wrapperVersion}/vosp-api-wrappers-java-${wrapperVersion}.jar'
+                    sh (""" java -jar veracode-wrapper.jar \
+                        -vid "${VID}" \
+                        -vkey "${VKEY}" \
+                        -action uploadandscan \
+                        -appname "pygoat-demo" \
+                        -createprofile true \
+                        -filepath ${caminhoPacote} \
+                        -deleteincompletescan true \
+                        -version "${BUILD_NUMBER}"
+                    """)
+                }
+            }
+        }
+
         stage('Veracode SAST - Pipeline Scan') { 
             steps {
                 withCredentials([usernamePassword(credentialsId: 'veracode-credentials', passwordVariable: 'VKEY', usernameVariable: 'VID')]) {
