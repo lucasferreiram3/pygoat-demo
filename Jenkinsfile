@@ -35,7 +35,7 @@ pipeline {
                         -filepath ${caminhoPacote} \
                         -createsandbox true \
                         -sandboxname "${BRANCH_NAME}" \
-                        -deleteincompletescan true \
+                        -deleteincompletescan 2 \
                         -version "${BUILD_NUMBER}"
                     """)
                 }
@@ -53,7 +53,7 @@ pipeline {
                         -appname "pygoat-demo" \
                         -createprofile true \
                         -filepath ${caminhoPacote} \
-                        -deleteincompletescan true \
+                        -deleteincompletescan 2 \
                         -version "${BUILD_NUMBER}"
                     """)
                 }
