@@ -10,7 +10,7 @@ pipeline {
         stage('Archive') { 
             steps {
                 sh 'mkdir uploadToVeracode'
-                sh 'find "${WORKSPACE}" -name "*.py*" -o -name "*.html*" -o -name "*.js*" -o -name "*.css*" -o -name "*.json*" -o -name "*.lock*" | tar --exclude=./uploadToVeracode --exclude=./*.git* --exclude=./*.github*  --exclude=./*test* --exclude=./*mock* -cvzf uploadToVeracode/upload.tar.gz .'
+                sh 'find "${WORKSPACE}" -name "*.py*" -o -name "*.html*" -o -name "*.js*" -o -name "*.css*" -o -name "*.json*" -o -name "*.lock*" | tar --exclude=./uploadToVeracode --exclude=./*.git* --exclude=./*.github*  --exclude=./*test* --exclude=./*mock* --exclude=./*md* --exclude=./*txt* --exclude=./*svg* --exclude=./*png* -cvzf uploadToVeracode/upload.tar.gz .'
             }
         }
 
