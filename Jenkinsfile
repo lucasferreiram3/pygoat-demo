@@ -35,7 +35,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'veracode-credentials', passwordVariable: 'VKEY', usernameVariable: 'VID')]) {
                     sh 'curl -o veracode-wrapper.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${wrapperVersion}/vosp-api-wrappers-java-${wrapperVersion}.jar'
-                    sh sh 'java -jar veracode-wrapper.jar -vid "${VID}" -vkey "${VKEY}" -action uploadandscan -appname ${appProfile} -createprofile true -filepath ${caminhoPacote} -deleteincompletescan 2 -version "${BUILD_NUMBER}" '
+                    sh 'java -jar veracode-wrapper.jar -vid "${VID}" -vkey "${VKEY}" -action uploadandscan -appname ${appProfile} -createprofile true -filepath ${caminhoPacote} -deleteincompletescan 2 -version "${BUILD_NUMBER}" '
                 }
             }
         }
