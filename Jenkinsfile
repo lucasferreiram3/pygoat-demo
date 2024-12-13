@@ -3,13 +3,14 @@ pipeline {
     environment {
         caminhoPacote = 'uploadToVeracode/upload.tar.gz'
         wrapperVersion = '24.10.15.0'
+        appProfile = 'pygoat-demo'
     }
 
     stages {
         stage('Archive') { 
             steps {
                 sh 'mkdir uploadToVeracode'
-                sh 'find . -name "*.py*" -o -name "*.html*" -o -name "*.js*" -o -name "*.css*" -o -name "*.json*" -o -name "*.lock*" | tar --exclude=./*uploadToVeracode* --exclude=./*.git* --exclude=./*.github*  --exclude=./*test* --exclude=./*mock* -cvzf uploadToVeracode/upload.tar.gz .'
+                sh 'find "${WORKSPACE}" -name "*.py*" -o -name "*.html*" -o -name "*.js*" -o -name "*.css*" -o -name "*.json*" -o -name "*.lock*" | tar --exclude=./uploadToVeracode --exclude=./*.git* --exclude=./*.github*  --exclude=./*test* --exclude=./*mock* -cvzf uploadToVeracode/upload.tar.gz .'
             }
         }
 
@@ -21,23 +22,11 @@ pipeline {
             }
         }
 
-
         stage('Veracode SAST - Sandbox Scan') { 
             steps {
                 withCredentials([usernamePassword(credentialsId: 'veracode-credentials', passwordVariable: 'VKEY', usernameVariable: 'VID')]) {
                     sh 'curl -o veracode-wrapper.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${wrapperVersion}/vosp-api-wrappers-java-${wrapperVersion}.jar'
-                    sh (""" java -jar veracode-wrapper.jar \
-                        -vid "${VID}" \
-                        -vkey "${VKEY}" \
-                        -action uploadandscan \
-                        -appname "pygoat-demo" \
-                        -createprofile true \
-                        -filepath ${caminhoPacote} \
-                        -createsandbox true \
-                        -sandboxname "${BRANCH_NAME}" \
-                        -deleteincompletescan 2 \
-                        -version "${BUILD_NUMBER}"
-                    """)
+                    sh 'java -jar veracode-wrapper.jar -vid "${VID}" -vkey "${VKEY}" -action uploadandscan -appname ${appProfile} -createprofile true -filepath ${caminhoPacote} -createsandbox true -sandboxname "${BRANCH_NAME}" -deleteincompletescan 2 -version "${BUILD_NUMBER}" '
                 }
             }
         }
@@ -46,16 +35,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'veracode-credentials', passwordVariable: 'VKEY', usernameVariable: 'VID')]) {
                     sh 'curl -o veracode-wrapper.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${wrapperVersion}/vosp-api-wrappers-java-${wrapperVersion}.jar'
-                    sh (""" java -jar veracode-wrapper.jar \
-                        -vid "${VID}" \
-                        -vkey "${VKEY}" \
-                        -action uploadandscan \
-                        -appname "pygoat-demo" \
-                        -createprofile true \
-                        -filepath ${caminhoPacote} \
-                        -deleteincompletescan 2 \
-                        -version "${BUILD_NUMBER}"
-                    """)
+                    sh sh 'java -jar veracode-wrapper.jar -vid "${VID}" -vkey "${VKEY}" -action uploadandscan -appname ${appProfile} -createprofile true -filepath ${caminhoPacote} -deleteincompletescan 2 -version "${BUILD_NUMBER}" '
                 }
             }
         }
@@ -70,11 +50,10 @@ pipeline {
             }
         }
 
-        stage("clean workspace") {
+        stage("Clean Workspace") {
             steps {
                 script {
                     sh 'ls -l'
-                    sh 'rm -rf pipeline-scan.jar pipeline-scan.jar README veracode-wrapper.jar'
                     cleanWs()
                     sh 'ls -l'
                 }
